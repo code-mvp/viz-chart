@@ -1,4 +1,6 @@
 
+if (typeof(Viz) == 'undefined') Viz = {};
+
 Viz.Line = function (id){
         this.xMax = 0;
         this.yMax = 0;
@@ -61,14 +63,11 @@ Viz.Line.prototype.getPoint = function (e)
   var mouse  = Viz.getMouseXY(e);
   var mouseX  = mouse.x;
   var mouseY  = mouse.y;
-  //console.log(obj.coords);
+  
   for (var i=0; i<obj.coords.length; ++i) {
-    var xCoord = obj.coords[i][0];
-    var yCoord = obj.coords[i][1];
-
+    var xCoord = obj.coords[i].x;
+    var yCoord = obj.coords[i].y;
     if (mouseX <= (xCoord + 5) && mouseX >= (xCoord - 5) && mouseY <= (yCoord + 5)&& mouseY >= (yCoord - 5)) {
-      //return [obj, xCoord, yCoord, i];
-      
       return {
         ele: obj,
         x: xCoord,
@@ -138,7 +137,6 @@ Viz.Line.prototype.renderAxis = function (shouldRenderText){
 };
 
 Viz.Line.prototype.drawLine = function(pt, strokeStyle){
-  console.log(pt);
   var ctx = this.context;
   ctx.strokeStyle = (strokeStyle === null) ? "black" : strokeStyle;
   ctx.lineWidth = 4;
@@ -246,8 +244,9 @@ Viz.Line.prototype.Draw = function (){
     c.arc(sx, ptY, 4, 0, Math.PI * 2, true);
     c.fill(); 
     
-    this.coords.push([sx, ptY]);
-    
+    //this.coords.push([sx, ptY]);
+    this.coords.push({x: sx, y:ptY});
+
     sx+=xinc;
     
   }
