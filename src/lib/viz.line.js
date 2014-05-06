@@ -7,6 +7,7 @@ Viz.Line = function (id){
         this.YRatio = 0;
         this.overlayDiv= null;
           
+        this.fillStyle = "white";
         this.margin = {
           top:25,
           left:50,
@@ -29,8 +30,6 @@ Viz.Line = function (id){
         this.title = "India population charts";
         this.xLabel = "YEARS";
         this.yLabel = "In millions";
-  
-  
         this.coords = [];
   
 };
@@ -83,7 +82,7 @@ Viz.Line.prototype.createOverlay = function (){
 };
 
 Viz.Line.prototype.renderParts = function (){
-   //this.renderBackground();
+   this.renderBackground();
    this.renderText();
    this.renderAxis(true);
   
@@ -107,6 +106,7 @@ Viz.Line.prototype.renderAxis = function (shouldRenderText){
   for(var i = 0; i < this.data.length; i++){
     yPos += (i === 0) ? margin.top : yInc;
     console.log("YPos: ", yPos);    
+    
     // draw horizontal lines
     this.drawLine({x : margin.left, y:yPos, x2:this.xMax+margin.left, y2:yPos},"#E8E8E8");
     
@@ -124,8 +124,7 @@ Viz.Line.prototype.renderAxis = function (shouldRenderText){
       if (this.labels !== undefined) {
         txt = this.labels[i];
         txtSize = ctx.measureText(txt);
-        ctx.fillText(txt, xPos, this.yMax + (margin.bottom));
-        //ctx.fillText(txt, xPos, this.h-(margin.bottom/2));
+        ctx.fillText(txt, xPos, this.h-(margin.bottom/2));
       }
       xPos += xInc;
     }
@@ -135,7 +134,7 @@ Viz.Line.prototype.renderAxis = function (shouldRenderText){
   this.drawLine({x:margin.left,y:margin.top,x2:margin.left,y2:this.yMax});
   
   // Horizontal line
-  //this.drawLine({x:margin.left,y:this.yMax,x2:this.xMax,y2:this.yMax});
+  //this.drawLine({x:margin.left,y:this.yMax,x2:this.xMax+this.margin.left,y2:this.yMax});
 };
 
 Viz.Line.prototype.drawLine = function(pt, strokeStyle, lineWidth){
@@ -162,17 +161,24 @@ Viz.Line.prototype.getXInc = function (){
 Viz.Line.prototype.renderBackground = function (){
   var ctx = this.context;
   var margin = this.margin;
-  var lingrad = ctx.createLinearGradient(margin.left, margin.top,this.xMax,this.yMax);
-  lingrad.addColorStop(0.0,"#D4D4D4");
-  lingrad.addColorStop(0.2,"#fff");
-  lingrad.addColorStop(0.8,"#fff");
-  lingrad.addColorStop(1,"#D4D4D4");
-  ctx.fillStyle = lingrad;
-  ctx.fillRect(margin.left, margin.top, this.xMax,this.yMax-margin.top);
+
+  var fStyle = this.fillStyle;
+
+  ctx.save();
+
+  if (!fStyle) {
+    fStyle = ctx.createLinearGradient(margin.left, margin.top,this.xMax,this.yMax);
+    fStyle.addColorStop(0.0,"#D4D4D4");
+    fStyle.addColorStop(0.2,"#fff");
+    fStyle.addColorStop(0.8,"#fff");
+    fStyle.addColorStop(1,"#D4D4D4");
+  }
+
+  ctx.fillStyle = fStyle;
   
-  ctx.fillStyle="black";
- 
+  ctx.fillRect(margin.left, margin.top, this.xMax,this.yMax);
   
+  ctx.restore();
 };
 
 Viz.Line.prototype.renderText = function (){
@@ -189,7 +195,10 @@ Viz.Line.prototype.renderText = function (){
   // X-axis text
   var txtSize = ctx.measureText(this.xLabel);
   
-  ctx.fillText(this.xLabel, margin.left+(this.xMax/2)-(txtSize.width/2),this.yMax+margin.bottom*1.5);
+
+  ctx.fillText(this.xLabel, 
+              margin.left+(this.xMax/2)-(txtSize.width/2),
+              this.h-(margin.bottom/4));
   
   // Y-axis text
   ctx.save();
@@ -214,7 +223,6 @@ Viz.Line.prototype.Draw = function (){
   c.strokeStyle = '#333';
   c.font = 'italic 8pt sans-serif';
   c.textAlign = "center";
-  
   
   c.strokeStyle = '#f00';
   c.beginPath();
@@ -246,9 +254,7 @@ Viz.Line.prototype.Draw = function (){
     c.fill(); 
     
     this.coords.push({x: sx, y:ptY});
-
     sx+=xinc;
-    
   }
 };
 
