@@ -1,7 +1,7 @@
 
 if (typeof(Viz) == 'undefined') Viz = {};
 
-Viz.Line = function (id){
+Viz.Bar = function (id){
         this.xMax = 0;
         this.yMax = 0;
         this.YRatio = 0;
@@ -32,7 +32,7 @@ Viz.Line = function (id){
   
 };
 
-Viz.Line.prototype.getMaxYDataValue = function() {
+Viz.Bar.prototype.getMaxYDataValue = function() {
     var max = 0;
      
     for(var i = 0; i < this.data.length; i ++) {
@@ -52,7 +52,7 @@ Viz.Line.prototype.getMaxYDataValue = function() {
     * @param object   OPTIONAL You can pass in the bar object instead of the
     *                          function getting it from the canvas
     */
-Viz.Line.prototype.getPoint = function (e)
+Viz.Bar.prototype.getPoint = function (e)
 {
   var canvas  = e.target;
   var obj     = canvas.__object__;
@@ -75,26 +75,21 @@ Viz.Line.prototype.getPoint = function (e)
   }
 };
 
-Viz.Line.prototype.createOverlay = function (){
+Viz.Bar.prototype.createOverlay = function (){
   
 };
 
-Viz.Line.prototype.renderParts = function (){
+Viz.Bar.prototype.renderParts = function (){
    this.renderBackground();
    this.renderText();
    this.renderAxis(true);
-  
-   //var ctx = this.context;
-   //ctx.save();
-   //ctx.fillRect(this.margin.left,0,this.xMax,this.h);
-   //ctx.restore();
 };
 
-Viz.Line.prototype.renderAxis = function (shouldRenderText){
+Viz.Bar.prototype.renderAxis = function (shouldRenderText){
   var yInc = Math.round(this.yMax / this.data.length);
   var yPos = 0;
   var xInc = this.getXInc();
-  var xPos = this.margin.left;
+  var xPos = this.margin.left + 20;  // leave some space in the left
   
   var margin = this.margin;
   var ctx = this.context;
@@ -130,12 +125,9 @@ Viz.Line.prototype.renderAxis = function (shouldRenderText){
   
   // Vertical line
   this.drawLine({x:margin.left,y:margin.top,x2:margin.left,y2:this.yMax});
-  
-  // Horizontal line
-  //this.drawLine({x:margin.left,y:this.yMax,x2:this.xMax+this.margin.left,y2:this.yMax});
 };
 
-Viz.Line.prototype.drawLine = function(pt, strokeStyle, lineWidth){
+Viz.Bar.prototype.drawLine = function(pt, strokeStyle, lineWidth){
   var ctx = this.context;
   lineWidth = lineWidth || 1;
   ctx.strokeStyle = (strokeStyle === null) ? "black" : strokeStyle;
@@ -148,7 +140,7 @@ Viz.Line.prototype.drawLine = function(pt, strokeStyle, lineWidth){
   ctx.closePath();
 };
 
-Viz.Line.prototype.getXInc = function (){
+Viz.Bar.prototype.getXInc = function (){
   var len  = this.data.length; 
   
   var xInc = Math.floor(this.xMax / (len));
@@ -156,7 +148,7 @@ Viz.Line.prototype.getXInc = function (){
   return xInc;
 };
 
-Viz.Line.prototype.renderBackground = function (){
+Viz.Bar.prototype.renderBackground = function (){
   var ctx = this.context;
   var margin = this.margin;
 
@@ -179,7 +171,7 @@ Viz.Line.prototype.renderBackground = function (){
   ctx.restore();
 };
 
-Viz.Line.prototype.renderText = function (){
+Viz.Bar.prototype.renderText = function (){
   var labelFont = "10pt Arial";
   var ctx = this.context;
   var margin = this.margin;
@@ -207,8 +199,7 @@ Viz.Line.prototype.renderText = function (){
   ctx.restore();
 };
 
-Viz.Line.prototype.Draw = function (){
-  
+Viz.Bar.prototype.Draw = function (){
   var margin = this.margin;
   
   this.xMax = this.w - (margin.left + margin.right);
@@ -222,37 +213,30 @@ Viz.Line.prototype.Draw = function (){
   c.font = 'italic 8pt sans-serif';
   c.textAlign = "center";
   
-  c.strokeStyle = '#f00';
+  
+
+  c.save();
   c.beginPath();
   
   var xinc = this.getXInc();
   var maxYValue = this.getMaxYDataValue();
-  var sx = margin.left;
+  var sx = margin.left + 10;
   var ptY = 0;
+  var top;
+
+  c.strokeStyle = "rgba(100,255,255,0.5)"; //'#f00';
   for(var i = 0; i < this.data.length; i ++) {
     ptY = (maxYValue - this.data[i]) * this.yRatio;
     if (ptY < margin.top) ptY = margin.top;
-    if (i === 0) {
-      c.moveTo(sx, ptY);
-      continue;
-    }
+
+    top = (this.h - this.margin.bottom) - ptY;
+    c.rect(sx, ptY,20, top);
+    c.stroke();
+    c.fillStyle = "rgba(100,255,255,0.5)";
+    c.fill();
     sx = sx + xinc;
-    c.lineTo(sx, ptY);
   }
-  c.stroke();
-  
-  c.fillStyle = '#333';
- 
-  sx = margin.left;
-  for(var j = 0; j < this.data.length; j ++) {  
-    ptY = (maxYValue - this.data[j]) * this.yRatio;
-    if (ptY < margin.top) ptY = margin.top;
-    c.beginPath();
-    c.arc(sx, ptY, 4, 0, Math.PI * 2, true);
-    c.fill(); 
-    
-    this.coords.push({x: sx, y:ptY});
-    sx+=xinc;
-  }
+
+  c.restore();
 };
 

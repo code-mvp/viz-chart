@@ -4,7 +4,7 @@
 <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="lib/viz.util.js"></script>
 <script src="lib/viz.line.js"></script>
-
+<script src="lib/viz.bar.js"></script>
   <meta charset="utf-8">
   <title>Viz Chart Library</title>
   
@@ -22,7 +22,7 @@
   
   <canvas id="cv" width="400" height="200"></canvas>
   <br/>
-   <canvas id="cv2" width="200" height="200"></canvas>
+   <canvas id="cv2" width="400" height="400"></canvas>
   <div id="overlay" style="display:none;">
     hello
   </div>
@@ -56,13 +56,15 @@
     };
 
 
-    var line1 = new Viz.Line("cv2",[8004,8006,22,50,5]);
-    line1.title = "Food grains production in India";
-    line1.xLabel = "Year";
-    line1.yLabel = "Production";
-    line1.margin.bottom=20;
-    line1.labels = ["1990","1991","1992","1993","1994"];
-    line1.Draw();
+    var bar = new Viz.Bar("cv2",[80,40,22,50,5]);
+    bar.labels = ["1990","1991","1992","1993","1994"];
+    bar.fillStyle = "white";
+    bar.title = "Food grains production in India";
+    bar.xLabel = "Year";
+    bar.yLabel = "Production";
+    bar.margin.bottom=20;
+    
+    bar.Draw();
 
   </script>
 
