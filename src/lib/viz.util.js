@@ -5,9 +5,9 @@ Viz.clamp = function(v, min, max){
   return v < min ? min : (v > max ? max : v);
 };
 
-// Chart Library
-
-
+Viz.isArray = function(o) {
+  return Object.prototype.toString.call(o) === '[object Array]'; 
+}
 
 Viz.events = [];
 

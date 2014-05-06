@@ -103,7 +103,6 @@ Viz.Line.prototype.renderAxis = function (shouldRenderText){
   
   for(var i = 0; i < this.data.length; i++){
     yPos += (i === 0) ? margin.top : yInc;
-    console.log("YPos: ", yPos);    
     
     // draw horizontal lines
     this.drawLine({x : margin.left, y:yPos, x2:this.xMax+margin.left, y2:yPos},"#E8E8E8");

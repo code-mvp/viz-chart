@@ -2,6 +2,9 @@
 if (typeof(Viz) == 'undefined') Viz = {};
 
 Viz.Bar = function (id){
+        this.barWidth = 10;
+        this.spaceBetween = 5;
+        this.spaceBetweenGroups = 10;
         this.xMax = 0;
         this.yMax = 0;
         this.YRatio = 0;
@@ -29,18 +32,22 @@ Viz.Bar = function (id){
         this.xLabel = "YEARS";
         this.yLabel = "In millions";
         this.coords = [];
-  
+        if (Viz.isArray(this.data[0])) {
+         this.graphtype = "grouped";
+        }
 };
 
-Viz.Bar.prototype.getMaxYDataValue = function() {
+Viz.Bar.prototype.getMaxYDataValue = function(data) {
     var max = 0;
-     
-    for(var i = 0; i < this.data.length; i ++) {
-        if(this.data[i] > max) {
-            max = this.data[i];
+    var flatten = [];
+    flatten = flatten.concat.apply(flatten, data);
+    for(var i = 0; i < flatten.length; i ++) {
+        if(flatten[i] > max) {
+            max = flatten[i];
         }
     }
     //max += 10 - max % 10;
+    console.log("MAX Y: " , max);
     return max;
 };
 
@@ -94,12 +101,11 @@ Viz.Bar.prototype.renderAxis = function (shouldRenderText){
   var margin = this.margin;
   var ctx = this.context;
   
-  var yMaxValue = this.getMaxYDataValue();
-  
+  var yMaxValue = this.getMaxYDataValue(this.data);
+  console.log("yMaxValue: ", yMaxValue);
+
   for(var i = 0; i < this.data.length; i++){
     yPos += (i === 0) ? margin.top : yInc;
-    console.log("YPos: ", yPos);    
-    
     // draw horizontal lines
     this.drawLine({x : margin.left, y:yPos, x2:this.xMax+margin.left, y2:yPos},"#E8E8E8");
     
@@ -119,7 +125,13 @@ Viz.Bar.prototype.renderAxis = function (shouldRenderText){
         txtSize = ctx.measureText(txt);
         ctx.fillText(txt, xPos, this.h-(margin.bottom/2));
       }
-      xPos += xInc;
+      if (this.graphtype === "grouped") {
+        xPos += xInc + this.spaceBetweenGroups + (this.barWidth * 2);
+        xPos += (xInc*2);
+      }
+      else{
+        xPos += xInc ;
+      }
     }
   }
   
@@ -142,9 +154,17 @@ Viz.Bar.prototype.drawLine = function(pt, strokeStyle, lineWidth){
 
 Viz.Bar.prototype.getXInc = function (){
   var len  = this.data.length; 
+
+  if (Viz.isArray(this.data[0])) {
+     len = this.data.length * this.data[0].length * this.barWidth ;
+  }
   
+  // todo: pending bar x axis pos calculation
+
+  console.log("Bars: ",len)
   var xInc = Math.floor(this.xMax / (len));
 
+  console.log("xInc: ", xInc);
   return xInc;
 };
 
@@ -204,7 +224,7 @@ Viz.Bar.prototype.Draw = function (){
   
   this.xMax = this.w - (margin.left + margin.right);
   this.yMax = this.h - (margin.top + margin.bottom);
-  this.yRatio = this.yMax / this.getMaxYDataValue();
+  this.yRatio = this.yMax / this.getMaxYDataValue(this.data);
   this.renderParts();
   
   var c = this.context;
@@ -212,31 +232,44 @@ Viz.Bar.prototype.Draw = function (){
   c.strokeStyle = '#333';
   c.font = 'italic 8pt sans-serif';
   c.textAlign = "center";
-  
-  
-
   c.save();
+
   c.beginPath();
   
   var xinc = this.getXInc();
-  var maxYValue = this.getMaxYDataValue();
+  var maxYValue = this.getMaxYDataValue(this.data);
   var sx = margin.left + 10;
   var ptY = 0;
   var top;
 
   c.strokeStyle = "rgba(100,255,255,0.5)"; //'#f00';
+  
   for(var i = 0; i < this.data.length; i ++) {
-    ptY = (maxYValue - this.data[i]) * this.yRatio;
-    if (ptY < margin.top) ptY = margin.top;
-
-    top = (this.h - this.margin.bottom) - ptY;
-    c.rect(sx, ptY,20, top);
-    c.stroke();
-    c.fillStyle = "rgba(100,255,255,0.5)";
-    c.fill();
-    sx = sx + xinc;
+    if (Viz.isArray(this.data[i])) {
+      for(var j = 0; j < this.data[i].length; j++) {
+        ptY = (maxYValue - this.data[i][j]) * this.yRatio;
+        if (ptY < margin.top) ptY = margin.top;
+        top = (this.h - this.margin.bottom) - ptY;
+        this.renderBar(sx, ptY, this.barWidth, top);
+        sx = sx + this.barWidth + this.spaceBetween; // space between bars in group
+      }      
+      sx = sx + xinc + this.spaceBetweenGroups;  
+    }
+    else {
+      ptY = (maxYValue - this.data[i]) * this.yRatio;
+      if (ptY < margin.top) ptY = margin.top;
+      top = (this.h - this.margin.bottom) - ptY;
+      this.renderBar(sx, ptY, this.barWidth, top);
+      sx = sx + xinc; 
+    }
   }
-
   c.restore();
 };
 
+Viz.Bar.prototype.renderBar = function (x,y,w,h){
+  var c = this.context;
+  c.rect(x, y,w, h);
+  c.stroke();
+  c.fillStyle = "rgba(100,255,255,0.5)";
+  c.fill();
+};
