@@ -106,7 +106,7 @@ Viz.Line.prototype.renderAxis = function (shouldRenderText){
   
   for(var i = 0; i < this.data.length; i++){
     yPos += (i === 0) ? margin.top : yInc;
-    
+    console.log("YPos: ", yPos);    
     // draw horizontal lines
     this.drawLine({x : margin.left, y:yPos, x2:this.xMax+margin.left, y2:yPos},"#E8E8E8");
     
@@ -146,7 +146,6 @@ Viz.Line.prototype.drawLine = function(pt, strokeStyle){
   
   ctx.stroke();
   ctx.closePath();
-  
 };
 
 Viz.Line.prototype.getXInc = function (){
@@ -186,7 +185,6 @@ Viz.Line.prototype.renderText = function (){
   
   // X-axis text
   var txtSize = ctx.measureText(this.xLabel);
-  //ctx.fillText(this.xLabel, margin.left+(this.xMax/2)-(txtSize.width/2),this.yMax+margin.bottom);
   
   ctx.fillText(this.xLabel, margin.left+(this.xMax/2)-(txtSize.width/2),this.yMax+margin.bottom*1.5);
   
@@ -244,7 +242,6 @@ Viz.Line.prototype.Draw = function (){
     c.arc(sx, ptY, 4, 0, Math.PI * 2, true);
     c.fill(); 
     
-    //this.coords.push([sx, ptY]);
     this.coords.push({x: sx, y:ptY});
 
     sx+=xinc;
