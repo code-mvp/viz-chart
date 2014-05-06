@@ -29,8 +29,8 @@
 
   <script>
 
-    var line = new Viz.Line("cv",[84,86,22,56,53,68,98,50]);
-    line.labels = ["1990","1991","1992","1993","1994","1995","1996","1997"];
+    var line = new Viz.Line("cv",[84,86,22,56,53,68,98,50,55]);
+    line.labels = ["1990","1991","1992","1993","1994","1995","1996","1997","1998"];
     line.Draw();
     var $overlay = $("#overlay");
 
@@ -38,7 +38,6 @@
       var obj = line.getPoint(e);   
       if (obj !== undefined) {
         console.log("event: " + obj.x);
-        
       }
     };
 
@@ -62,8 +61,8 @@
     line1.xLabel = "Year";
     line1.yLabel = "Production";
     line1.margin.bottom=20;
-    //line1.labels = ["1990","1991","1992"];
-    //line1.Draw();
+    line1.labels = ["1990","1991","1992"];
+    line1.Draw();
 
   </script>
 

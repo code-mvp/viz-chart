@@ -9,9 +9,9 @@ Viz.Line = function (id){
           
         this.margin = {
           top:25,
-          left:60,
-          right:30,
-          bottom:40
+          left:50,
+          right:25,
+          bottom:25
         };
   
         // Get the canvas and context objects
@@ -116,8 +116,10 @@ Viz.Line.prototype.renderAxis = function (shouldRenderText){
       var txt = Math.round(yMaxValue - ((i === 0)? 0 : yPos/this.yRatio));
       
       var txtSize = ctx.measureText(txt);
-      ctx.fillText(txt,margin.left-((txtSize.width>=14)?txtSize.width:10)-7,yPos+4);
-      
+
+      //ctx.fillText(txt,margin.left-((txtSize.width>=14)?txtSize.width:10)-7,yPos+4);
+      ctx.fillText(txt,margin.left-txtSize.width,yPos+4);
+
       // x axis labels
       if (this.labels !== undefined) {
         txt = this.labels[i];
@@ -136,10 +138,11 @@ Viz.Line.prototype.renderAxis = function (shouldRenderText){
   //this.drawLine({x:margin.left,y:this.yMax,x2:this.xMax,y2:this.yMax});
 };
 
-Viz.Line.prototype.drawLine = function(pt, strokeStyle){
+Viz.Line.prototype.drawLine = function(pt, strokeStyle, lineWidth){
   var ctx = this.context;
+  lineWidth = lineWidth || 2;
   ctx.strokeStyle = (strokeStyle === null) ? "black" : strokeStyle;
-  ctx.lineWidth = 4;
+  ctx.lineWidth = lineWidth;
   ctx.beginPath();
   ctx.moveTo(pt.x, pt.y);
   ctx.lineTo(pt.x2,pt.y2);
