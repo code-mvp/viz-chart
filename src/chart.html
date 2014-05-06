@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="lib/viz.util.js"></script>
+<script src="lib/viz.line.js"></script>
+
+  <meta charset="utf-8">
+  <title>Viz Chart Library</title>
+  
+  
+  <style>
+     canvas{
+       background-color:#dddddd;
+     }  
+     #overlay{
+       background-color:yellow;
+     }
+  </style>
+</head>
+<body>
+  
+  <canvas id="cv" width="400" height="200"></canvas>
+  <br/>
+   <canvas id="cv2" width="200" height="200"></canvas>
+  <div id="overlay" style="display:none;">
+    hello
+  </div>
+
+  <script>
+    
+    var line = new Viz.Line("cv",[84,86,22,56,53,68,98,50]);
+    line.labels = ["1990","1991","1992","1993","1994","1995","1996","1997"];
+    line.Draw();
+    var $overlay = $("#overlay");
+
+    line.canvas.onclick = function (e) {
+      var obj = line.getPoint(e);   
+      if (obj !== undefined) {
+        console.log("event: " + obj.x);
+        
+      }
+    };
+
+    line.canvas.onmousemove = function (e) {
+      var obj = line.getPoint(e);   
+      if (obj !== undefined) {
+        console.log("event: " + obj.ele.data[obj.i]);
+        $overlay.css( 'position', 'absolute' );
+        $overlay.css( 'top', e.pageY-25 );
+        $overlay.css( 'left', e.pageX );
+        $overlay.html(obj.ele.data[obj.i]);
+        $overlay.show(); 
+      }else{
+        $overlay.hide();
+      }
+    };
+
+
+    var line1 = new Viz.Line("cv2",[84,86,22]);
+    line1.title = "Food grains production in India";
+    line1.xLabel = "Year";
+    line1.yLabel = "Production";
+    line1.margin.bottom=20;
+    //line1.labels = ["1990","1991","1992"];
+    line1.Draw();
+
+  </script>
+
+</body>
+</html>
