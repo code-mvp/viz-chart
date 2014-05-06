@@ -29,8 +29,6 @@ Viz.Bar = function (id){
         this.h = this.canvas.height;
   
         this.title = "India population charts";
-        this.xLabel = "YEARS";
-        this.yLabel = "In millions";
         this.coords = [];
         if (Viz.isArray(this.data[0])) {
          this.graphtype = "grouped";
@@ -202,21 +200,23 @@ Viz.Bar.prototype.renderText = function (){
   // Title
   ctx.fillText(this.title,(this.w/2),margin.top/2);
   
-  // X-axis text
-  var txtSize = ctx.measureText(this.xLabel);
+  if (this.xLabel){
+    // X-axis text
+    var txtSize = ctx.measureText(this.xLabel);
+    ctx.fillText(this.xLabel, 
+                margin.left+(this.xMax/2)-(txtSize.width/2),
+                this.h-(margin.bottom/4));
+  }
   
-
-  ctx.fillText(this.xLabel, 
-              margin.left+(this.xMax/2)-(txtSize.width/2),
-              this.h-(margin.bottom/4));
-  
-  // Y-axis text
-  ctx.save();
-  // rotate 90 degree to left
-  ctx.rotate(-Math.PI / 2);
-  ctx.font = labelFont;
-  ctx.fillText(this.yLabel, (this.yMax/2)*-1,margin.left/4);
-  ctx.restore();
+  if (this.yLabel) {
+    // Y-axis text
+    ctx.save();
+    // rotate 90 degree to left
+    ctx.rotate(-Math.PI / 2);
+    ctx.font = labelFont;
+    ctx.fillText(this.yLabel, (this.yMax/2)*-1,margin.left/4);
+    ctx.restore();
+  }
 };
 
 Viz.Bar.prototype.Draw = function (){
