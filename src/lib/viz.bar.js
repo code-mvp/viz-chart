@@ -91,6 +91,11 @@ Viz.Bar.prototype.renderParts = function (){
 };
 
 Viz.Bar.prototype.renderAxis = function (shouldRenderText){
+
+  var scales = Viz.getScales(1,10,-50, 100);
+
+  console.log("Scales: ", scales);
+
   var yInc = Math.round(this.yMax / this.data.length);
   var yPos = 0;
   var xInc = this.getXInc();

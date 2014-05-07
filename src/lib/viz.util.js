@@ -1,5 +1,20 @@
 if (typeof(Viz) == 'undefined') Viz = {};
 
+Viz.getScales = function(minRange, maxRange, min, max){
+    var scales = [],                  // Prepare some variables
+    ranges = maxRange+1 - minRange,   // Amount of elements to be returned.
+    range  = (max-min)/ranges;        // Difference between min and max
+    console.log("range: ", range);
+    for(var i = 0; i < ranges; i++){
+        scales.push({
+            range: i+minRange,        // Current range number
+            min: min + (range * i),
+            max: min + (range * (i+1))
+        });
+    }
+    return scales;
+};
+
 // Utility functions
 Viz.clamp = function(v, min, max){
   return v < min ? min : (v > max ? max : v);
