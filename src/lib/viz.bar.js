@@ -132,6 +132,7 @@ Viz.Bar.prototype.renderAxis = function (shouldRenderText){
 
   var barWidth = (this.w - margin.left) * 85 / 100 / this.data.length;
   var barSpacing = (this.w - margin.left) * 15 / 100 / (this.data.length + 1);
+
   var categoryWidth = (this.w - margin.left) * (1 - 0.2) / this.data.length;
   var categorySpacing = (this.w - margin.left) * 0.2 / (this.data.length + 1);
       
@@ -284,6 +285,7 @@ Viz.Bar.prototype.Draw = function (){
 
   var barWidth = (this.w - margin.left) * 85 / 100 / this.getDataLength(this.data);
   var barSpacing = (this.w - margin.left) * 15 / 100 / (this.getDataLength(this.data) + 1);
+  
   var categoryWidth = (this.w - margin.left) * (1 - 0.2) / this.data.length;
   var categorySpacing = (this.w - margin.left) * 0.2 / (this.data.length + 1);
       
@@ -298,7 +300,7 @@ Viz.Bar.prototype.Draw = function (){
         this.renderBar(sx, ptY, this.barWidth, top);
         sx = sx + barWidth + barSpacing; // space between bars in group
       }      
-      sx = sx + categorySpacing; 
+      //sx = sx + categorySpacing; 
     }
     else {
       ptY = (maxYValue - this.data[i]) * this.yRatio;
