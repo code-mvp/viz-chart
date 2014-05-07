@@ -49,6 +49,29 @@ Viz.Bar.prototype.getMaxYDataValue = function(data) {
     return max;
 };
 
+Viz.Bar.prototype.getDataLength = function(data) {
+    var max = 0;
+    var flatten = [];
+    flatten = flatten.concat.apply(flatten, data);
+    console.log("Flatten Len: ", flatten.length);
+    return flatten.length;
+};
+
+/* Gets the min data value */
+Viz.Bar.prototype.getMinYDataValue = function(data) {
+    var min = 0;
+    var flatten = [];
+    flatten = flatten.concat.apply(flatten, data);
+    for(var i = 0; i < flatten.length; i ++) {
+        if(flatten[i] < min) {
+            min = flatten[i];
+        }
+    }
+    //max += 10 - max % 10;
+    console.log("MIN Y: " , min);
+    return max;
+};
+
 
 /**
     * The getPoint() method - used to get the point the mouse is currently over, if any
@@ -92,7 +115,7 @@ Viz.Bar.prototype.renderParts = function (){
 
 Viz.Bar.prototype.renderAxis = function (shouldRenderText){
 
-  var scales = Viz.getScales(1,10,-50, 100);
+  var scales = Viz.getScalarScales(1,10,-50, 100);
 
   console.log("Scales: ", scales);
 
@@ -106,6 +129,15 @@ Viz.Bar.prototype.renderAxis = function (shouldRenderText){
   
   var yMaxValue = this.getMaxYDataValue(this.data);
   console.log("yMaxValue: ", yMaxValue);
+
+  var barWidth = (this.w - margin.left) * 85 / 100 / this.data.length;
+  var barSpacing = (this.w - margin.left) * 15 / 100 / (this.data.length + 1);
+  var categoryWidth = (this.w - margin.left) * (1 - 0.2) / this.data.length;
+  var categorySpacing = (this.w - margin.left) * 0.2 / (this.data.length + 1);
+      
+
+  console.log("BarWidth: ", barWidth);
+  console.log("BarSpacing: ",barSpacing);
 
   for(var i = 0; i < this.data.length; i++){
     yPos += (i === 0) ? margin.top : yInc;
@@ -129,11 +161,13 @@ Viz.Bar.prototype.renderAxis = function (shouldRenderText){
         ctx.fillText(txt, xPos, this.h-(margin.bottom/2));
       }
       if (this.graphtype === "grouped") {
-        xPos += xInc + this.spaceBetweenGroups + (this.barWidth * 2);
-        xPos += (xInc*2);
+        //xPos += xInc + this.spaceBetweenGroups + (this.barWidth * 2);
+        //xPos += (xInc*2);
+        xPos += barWidth +barSpacing;
       }
       else{
-        xPos += xInc ;
+        //xPos += xInc ;
+        xPos += barWidth + barSpacing;
       }
     }
   }
@@ -245,8 +279,14 @@ Viz.Bar.prototype.Draw = function (){
   var maxYValue = this.getMaxYDataValue(this.data);
   var sx = margin.left + 10;
   var ptY = 0;
+
   var top;
 
+  var barWidth = (this.w - margin.left) * 85 / 100 / this.getDataLength(this.data);
+  var barSpacing = (this.w - margin.left) * 15 / 100 / (this.getDataLength(this.data) + 1);
+  var categoryWidth = (this.w - margin.left) * (1 - 0.2) / this.data.length;
+  var categorySpacing = (this.w - margin.left) * 0.2 / (this.data.length + 1);
+      
   c.strokeStyle = "rgba(100,255,255,0.5)"; //'#f00';
   
   for(var i = 0; i < this.data.length; i ++) {
@@ -256,16 +296,17 @@ Viz.Bar.prototype.Draw = function (){
         if (ptY < margin.top) ptY = margin.top;
         top = (this.h - this.margin.bottom) - ptY;
         this.renderBar(sx, ptY, this.barWidth, top);
-        sx = sx + this.barWidth + this.spaceBetween; // space between bars in group
+        sx = sx + barWidth + barSpacing; // space between bars in group
       }      
-      sx = sx + xinc + this.spaceBetweenGroups;  
+      sx = sx + categorySpacing; 
     }
     else {
       ptY = (maxYValue - this.data[i]) * this.yRatio;
       if (ptY < margin.top) ptY = margin.top;
       top = (this.h - this.margin.bottom) - ptY;
       this.renderBar(sx, ptY, this.barWidth, top);
-      sx = sx + xinc; 
+      //sx = sx + xinc; 
+      sx = sx + barWidth + barSpacing;
     }
   }
   c.restore();
