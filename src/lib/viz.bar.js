@@ -130,12 +130,23 @@ Viz.Bar.prototype.renderAxis = function (shouldRenderText){
   var yMaxValue = this.getMaxYDataValue(this.data);
   console.log("yMaxValue: ", yMaxValue);
 
+  /*
   var barWidth = (this.w - margin.left) * 85 / 100 / this.data.length;
   var barSpacing = (this.w - margin.left) * 15 / 100 / (this.data.length + 1);
 
   var categoryWidth = (this.w - margin.left) * (1 - 0.2) / this.data.length;
   var categorySpacing = (this.w - margin.left) * 0.2 / (this.data.length + 1);
-      
+     */ 
+
+  var BAR_PERCENT = 0.15;
+  var CATEGORY_PERCENT = 0.2;
+
+  var categoryWidth = (this.w - margin.left) * (1 - CATEGORY_PERCENT) / this.getDataLength(this.data);
+  var categorySpacing = (this.w - margin.left) * CATEGORY_PERCENT/ (this.getDataLength(this.data) + 1);
+
+  var barWidth = categoryWidth * (1-BAR_PERCENT )/ this.getDataLength(this.data);
+  var barSpacing = categoryWidth * BAR_PERCENT / (this.getDataLength(this.data) - 1);
+  
 
   console.log("BarWidth: ", barWidth);
   console.log("BarSpacing: ",barSpacing);
@@ -283,22 +294,31 @@ Viz.Bar.prototype.Draw = function (){
 
   var top;
 
-  var barWidth = (this.w - margin.left) * 85 / 100 / this.getDataLength(this.data);
-  var barSpacing = (this.w - margin.left) * 15 / 100 / (this.getDataLength(this.data) + 1);
+  var BAR_PERCENT = 0.85;
+  var CATEGORY_PERCENT = 0.2;
+
+  var categoryWidth = (this.w - margin.left) * (1 - CATEGORY_PERCENT) / this.getDataLength(this.data);
+  var categorySpacing = (this.w - margin.left) * CATEGORY_PERCENT/ (this.getDataLength(this.data) + 1);
+
+  var barWidth = categoryWidth * (1-BAR_PERCENT )/ this.getDataLength(this.data);
+  var barSpacing = categoryWidth * BAR_PERCENT / (this.getDataLength(this.data) - 1);
   
-  var categoryWidth = (this.w - margin.left) * (1 - 0.2) / this.data.length;
-  var categorySpacing = (this.w - margin.left) * 0.2 / (this.data.length + 1);
       
   c.strokeStyle = "rgba(100,255,255,0.5)"; //'#f00';
   
   for(var i = 0; i < this.data.length; i ++) {
+    var markX =  categorySpacing + categoryWidth / 2 + i * (categoryWidth + categorySpacing);
     if (Viz.isArray(this.data[i])) {
       for(var j = 0; j < this.data[i].length; j++) {
         ptY = (maxYValue - this.data[i][j]) * this.yRatio;
+      
         if (ptY < margin.top) ptY = margin.top;
         top = (this.h - this.margin.bottom) - ptY;
+        
+        sx =  margin.left + markX - categoryWidth / 2 + j * (barWidth + barSpacing) + barWidth / 2;
         this.renderBar(sx, ptY, this.barWidth, top);
-        sx = sx + barWidth + barSpacing; // space between bars in group
+        //sx = sx + barWidth + barSpacing; // space between bars in group
+        
       }      
       //sx = sx + categorySpacing; 
     }
@@ -308,7 +328,8 @@ Viz.Bar.prototype.Draw = function (){
       top = (this.h - this.margin.bottom) - ptY;
       this.renderBar(sx, ptY, this.barWidth, top);
       //sx = sx + xinc; 
-      sx = sx + barWidth + barSpacing;
+      //sx = sx + barWidth + barSpacing;
+      sx = sx + markX - categoryWidth / 2 + j * (barWidth + barSpacing) + barWidth / 2;
     }
   }
   c.restore();

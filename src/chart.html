@@ -22,7 +22,7 @@
   
   <canvas id="cv" width="400" height="200"></canvas>
   <canvas id="cv2" width="400" height="400"></canvas>
-  <canvas id="cv3" width="400" height="400"></canvas>
+  <canvas id="cv3" width="600" height="400"></canvas>
 
   <div id="overlay" style="display:none;">
     hello
@@ -57,8 +57,8 @@
     };
 
 
-    var bar = new Viz.Bar("cv2",[80,40,22,50,5,50,-30]);
-    bar.labels = ["1990","1991","1992","1993","1994","AA","BB"];
+    var bar = new Viz.Bar("cv2",[80,40,22,50,5,50,-30,30]);
+    bar.labels = ["1990","1991","1992","1993","1994","AA","BB","CC"];
     bar.fillStyle = "white";
     bar.title = "Food grains production in India";
     bar.xLabel = "Year";
